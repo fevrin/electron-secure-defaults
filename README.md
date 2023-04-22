@@ -1,5 +1,7 @@
 # electron-secure-defaults
 
+[![build-and-bundle](https://github.com/fevrin/electron-secure-defaults/actions/workflows/build-and-bundle.yml/badge.svg)](https://github.com/fevrin/electron-secure-defaults/actions/workflows/build-and-bundle.yml)
+
 This is a security-enhanced fork of [electron-quick-start-typescript](https://github.com/electron/electron-quick-start-typescript). It can be used as a starter kit for a new Electron app, or as an annotated resource for anyone looking to improve an existing project.
 
 The configuration in this repository is used in conjunction with [electron-hardener](https://github.com/1password/electron-hardener) to provide a secure frontend foundation for the [1Password](https://1password.com) desktop app.
