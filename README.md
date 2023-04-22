@@ -1,6 +1,6 @@
-
 # electron-secure-defaults
 
+[![pre-commit](https://github.com/fevrin/electron-secure-defaults/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/fevrin/electron-secure-defaults/actions/workflows/pre-commit.yml)
 [![build-and-bundle](https://github.com/fevrin/electron-secure-defaults/actions/workflows/build-and-bundle.yml/badge.svg)](https://github.com/fevrin/electron-secure-defaults/actions/workflows/build-and-bundle.yml)
 
 This is a security-enhanced fork of [electron-quick-start-typescript](https://github.com/electron/electron-quick-start-typescript). It can be used as a starter kit for a new Electron app, or as an annotated resource for anyone looking to improve an existing project.
