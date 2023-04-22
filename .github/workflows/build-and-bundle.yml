@@ -1,0 +1,100 @@
+name: build-and-bundle
+
+# Controls when the workflow will run
+on:
+  pull_request:
+    paths:
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build-and-bundle:
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Print file count
+        if: ${{ env.ACT }}
+        run: find | wc -l
+
+      - name: Set Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+
+      - name: Print file count
+        if: ${{ env.ACT }}
+        run: find | wc -l
+
+      - name: Run install
+        uses: borales/actions-yarn@v4.2.0 # suffers from <https://github.com/nektos/act/issues/1600>
+        with:
+          cmd: install # will run `yarn install` command
+
+      - name: Print file count
+        if: ${{ env.ACT }}
+        run: find | wc -l
+
+      - name: Build the package
+        uses: borales/actions-yarn@v4.2.0
+        with:
+          cmd: build # will run `yarn build` script
+
+      - name: Print file count
+        if: ${{ env.ACT }}
+        run: find | wc -l
+
+      - name: Bundle the package
+        uses: vimtor/action-zip@v1
+        with:
+          files: ./
+
+      - name: Print file count
+        if: ${{ env.ACT }}
+        run: find | wc -l
+
+#      - name: Package /dist with electron-builder
+#        # https://www.electron.build/
+
+      - name: Package the bundle
+        uses: borales/actions-yarn@v4.2.0
+        with:
+          cmd: package # will run `yarn package` script
+
+      - name: Print file count
+        if: ${{ env.ACT }}
+        run: find | wc -l
+
+      - uses: actions/upload-artifact@v3
+        if: ${{ !env.ACT }}
+        with:
+          name: electron-secure-defaults-artifact
+          path: ${{ github.workspace }}/result.zip
+
+      - name: Print file count
+        if: ${{ env.ACT }}
+        run: find | wc -l
+
+#      - name: Notify build results
+#        # include:
+#        # - a URL that points to the build
+#        # - the status of the build
+#        # - any other relevant information
+
+      - name: Check for and report any vulnerabilities
+        # report any high and critical vulnerabilities
+        uses: borales/actions-yarn@v4.2.0
+        with:
+          cmd: electronegativity --severity high # will run `yarn electronegativity` script to return "high" or above severity vulnerabilities
+
+      - name: Print file count
+        if: ${{ env.ACT }}
+        run: find | wc -l

@@ -1,0 +1,27 @@
+exclude: ^ansible/collections/
+# default_language_version:
+#   python: python3.8
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+       # to check the files types these support:
+       # https://github.com/pre-commit/pre-commit-hooks/blob/main/.pre-commit-hooks.yaml
+
+        # Python file tests
+#      - id: double-quote-string-fixer # only Python files
+
+       # text file tests
+      - id: check-json
+#      - id: check-executables-have-shebangs
+      - id: check-merge-conflict
+#      - id: check-yaml
+#        args: [--unsafe]  # Instead of loading the files, simply parse them for syntax.
+      - id: detect-private-key
+      - id: end-of-file-fixer
+#      - id: pretty-format-json
+#        args:
+#           - --no-sort-keys
+      - id: trailing-whitespace
+        args:
+           - --markdown-linebreak-ext=md,tpl

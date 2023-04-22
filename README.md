@@ -1,3 +1,4 @@
+
 # electron-secure-defaults
 
 [![build-and-bundle](https://github.com/fevrin/electron-secure-defaults/actions/workflows/build-and-bundle.yml/badge.svg)](https://github.com/fevrin/electron-secure-defaults/actions/workflows/build-and-bundle.yml)
