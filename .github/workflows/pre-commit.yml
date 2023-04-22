@@ -3,6 +3,8 @@ name: pre-commit
 # Controls when the workflow will run
 on:
   push:
+    branches-ignore:
+      - main
     paths:
        - '.github/workflows/pre-commit.yml'
        - '.pre-commit-config.yaml'
