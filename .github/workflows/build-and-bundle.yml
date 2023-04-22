@@ -1,0 +1,30 @@
+name: build-and-bundle
+
+# Controls when the workflow will run
+on:
+  push:
+    paths:
+  pull_request:
+    paths:
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build-and-bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Build and bundle the package
+      - name: Notify build results
+        # include:
+        # - a URL that points to the build
+        # - the status of the build
+        # - any other relevant information
+      - name: Check for and report any vulnerabilities
+        # report any high and critical vulnerabilities
+      - name: Package /dist with electron-builder
+        # https://www.electron.build/
