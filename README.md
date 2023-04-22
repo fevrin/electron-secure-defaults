@@ -1,4 +1,3 @@
-
 # electron-secure-defaults
 
 [![pre-commit](https://github.com/fevrin/electron-secure-defaults/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/fevrin/electron-secure-defaults/actions/workflows/pre-commit.yml)
