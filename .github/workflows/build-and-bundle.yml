@@ -116,18 +116,21 @@ jobs:
             * Warnings:
             * Errors:
 
-            You can find the full details here:j
+            You can find the full details here::
             ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           EOF
           )
-          echo "::set-output name=content::$NOTIFICATION_CONTENT"
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "NOTIFICATION_CONTENT<<$EOF" >> $GITHUB_ENV
+          echo "$NOTIFICATION_CONTENT" >> $GITHUB_ENV
+          echo "$EOF" >> $GITHUB_ENV
 
       - name: Notify build results
         # include:
         # - a URL that points to the build
         # - the status of the build
         # - any other relevant information
-        run: echo "${{ steps.notification_content.outputs.content }}"
+        run: echo "${{ env.NOTIFICATION_CONTENT }}"
 
 #        uses: actions/email@v2
 #        with:
