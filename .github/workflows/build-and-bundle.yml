@@ -39,6 +39,16 @@ jobs:
         with:
           cmd: install # will run `yarn install` command
 
+      - name: Check for and report any vulnerabilities
+        # report any high and critical vulnerabilities
+        uses: borales/actions-yarn@v4.2.0
+        with:
+          cmd: electronegativity --severity high # will run `yarn electronegativity` script to return "high" or above severity vulnerabilities
+
+      - name: Print file count
+        if: ${{ env.ACT }}
+        run: find | wc -l
+
       - name: Print file count
         if: ${{ env.ACT }}
         run: find | wc -l
@@ -116,13 +126,3 @@ jobs:
 #          to: 5051062+fevrin@users.noreply.github.com
 #          subject: "Build #${{ steps.checkout.outputs.build.number }} report"
 #          body: echo "${{ steps.notification_content.outputs.content }}"
-
-#      - name: Check for and report any vulnerabilities
-#        # report any high and critical vulnerabilities
-#        uses: borales/actions-yarn@v4.2.0
-#        with:
-#          cmd: electronegativity --severity high # will run `yarn electronegativity` script to return "high" or above severity vulnerabilities
-#
-#      - name: Print file count
-#        if: ${{ env.ACT }}
-#        run: find | wc -l
