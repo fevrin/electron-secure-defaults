@@ -78,23 +78,51 @@ jobs:
         with:
           name: electron-secure-defaults-artifact
           path: ${{ github.workspace }}/result.zip
+          if-no-files-found: error
 
       - name: Print file count
         if: ${{ env.ACT }}
         run: find | wc -l
 
-#      - name: Notify build results
-#        # include:
-#        # - a URL that points to the build
-#        # - the status of the build
-#        # - any other relevant information
+      # it seems to be unreasonably convoluted to retrieve the artifact URL, so I'll omit it in the output:
+      # https://github.com/actions/upload-artifact/issues/50
+      # https://github.com/orgs/community/discussions/51403
+      - name: Print build results
+        id: notification_content
+        run: |
+          NOTIFICATION_CONTENT=$(cat << EOF
 
-      - name: Check for and report any vulnerabilities
-        # report any high and critical vulnerabilities
-        uses: borales/actions-yarn@v4.2.0
-        with:
-          cmd: electronegativity --severity high # will run `yarn electronegativity` script to return "high" or above severity vulnerabilities
+            Here is a report on the status of build #${{ steps.checkout.outputs.build.number }}:
+            * Status: 
+            * Artifacts: 
+            * Warnings:
+            * Errors:
 
-      - name: Print file count
-        if: ${{ env.ACT }}
-        run: find | wc -l
+            You can find the full details here:j
+            ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          EOF
+          )
+          echo "::set-output name=content::$NOTIFICATION_CONTENT"
+
+      - name: Notify build results
+        # include:
+        # - a URL that points to the build
+        # - the status of the build
+        # - any other relevant information
+        run: echo "${{ steps.notification_content.outputs.content }}"
+
+#        uses: actions/email@v2
+#        with:
+#          to: 5051062+fevrin@users.noreply.github.com
+#          subject: "Build #${{ steps.checkout.outputs.build.number }} report"
+#          body: echo "${{ steps.notification_content.outputs.content }}"
+
+#      - name: Check for and report any vulnerabilities
+#        # report any high and critical vulnerabilities
+#        uses: borales/actions-yarn@v4.2.0
+#        with:
+#          cmd: electronegativity --severity high # will run `yarn electronegativity` script to return "high" or above severity vulnerabilities
+#
+#      - name: Print file count
+#        if: ${{ env.ACT }}
+#        run: find | wc -l
