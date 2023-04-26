@@ -102,7 +102,7 @@ jobs:
         if: ${{ env.ACT }}
         run: find | wc -l
 
-      # it seems to be unreasonably convoluted to retrieve the artifact URL, so I'll omit it in the output:
+      # it seems to be unreasonably convoluted to retrieve the artifact URL, so I'll use a fake value:
       # https://github.com/actions/upload-artifact/issues/50
       # https://github.com/orgs/community/discussions/51403
       - name: Print build results
@@ -110,11 +110,9 @@ jobs:
         run: |
           NOTIFICATION_CONTENT=$(cat << EOF
 
-            Here is a report on the status of build #${{ steps.checkout.outputs.build.number }}:
-            * Status: 
-            * Artifacts: 
-            * Warnings:
-            * Errors:
+            Here is a report on the status of "${{ github.workflow }}" build #${{ github.run_number }}:
+            * Job status: ${{ job.status }}
+            * Artifacts: ${{ github.server_url }}/${{ github.repository }}/suites/${{ github.suite_id }}/artifacts/${{ github.artifact_id }}
 
             You can find the full details here::
             ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -135,5 +133,5 @@ jobs:
 #        uses: actions/email@v2
 #        with:
 #          to: 5051062+fevrin@users.noreply.github.com
-#          subject: "Build #${{ steps.checkout.outputs.build.number }} report"
-#          body: echo "${{ steps.notification_content.outputs.content }}"
+#          subject: "Build #${{ github.run_number }} report"
+#          body: echo "${{ env.NOTIFICATION_CONTENT }}"
