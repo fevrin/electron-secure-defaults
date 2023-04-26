@@ -78,10 +78,7 @@ jobs:
         run: ls -halF package
 
       - name: Bundle the package
-        uses: vimtor/action-zip@v1
-        with:
-          files: package/
-          dest: electron-secure-defaults-app.zip
+        run: zip electron-secure-defaults-app.zip package/electron-secure-defaults*
 
       - name: List 'electron-secure-defaults-app.zip' contents
         if: ${{ env.ACT }}
