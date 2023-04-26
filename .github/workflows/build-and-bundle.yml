@@ -38,15 +38,15 @@ jobs:
         with:
           cmd: install # will run `yarn install` command
 
+      - name: Print file count
+        if: ${{ env.ACT }}
+        run: find | wc -l
+
       - name: Check for and report any vulnerabilities
         # report any high and critical vulnerabilities
         uses: borales/actions-yarn@v4.2.0
         with:
           cmd: electronegativity --severity high # will run `yarn electronegativity` script to return "high" or above severity vulnerabilities
-
-      - name: Print file count
-        if: ${{ env.ACT }}
-        run: find | wc -l
 
       - name: Print file count
         if: ${{ env.ACT }}
@@ -78,7 +78,8 @@ jobs:
         run: ls -halF package
 
       - name: Bundle the package
-        run: zip electron-secure-defaults-app.zip package/electron-secure-defaults*
+        run: |
+          zip --junk-paths electron-secure-defaults-app.zip package/electron-secure-defaults*
 
       - name: List 'electron-secure-defaults-app.zip' contents
         if: ${{ env.ACT }}
