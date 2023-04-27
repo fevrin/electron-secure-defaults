@@ -42,6 +42,9 @@ jobs:
         if: ${{ env.ACT }}
         run: find | wc -l
 
+      - name: Check for and report any outdated dependencies
+        run: npm audit fix --force
+
       - name: Check for and report any vulnerabilities
         # report any high and critical vulnerabilities
         uses: borales/actions-yarn@v4.2.0
@@ -103,7 +106,7 @@ jobs:
       # it seems to be unreasonably convoluted to retrieve the artifact URL, so I'll use a fake value:
       # https://github.com/actions/upload-artifact/issues/50
       # https://github.com/orgs/community/discussions/51403
-      - name: Print build results
+      - name: Generate build report
         id: notification_content
         run: |
           NOTIFICATION_CONTENT=$(cat << EOF
@@ -121,15 +124,14 @@ jobs:
           echo "$NOTIFICATION_CONTENT" >> $GITHUB_ENV
           echo "$EOF" >> $GITHUB_ENV
 
-      - name: Notify build results
+      - name: Notify build report
         # include:
         # - a URL that points to the build
         # - the status of the build
         # - any other relevant information
-        run: echo "${{ env.NOTIFICATION_CONTENT }}"
-
 #        uses: actions/email@v2
 #        with:
 #          to: 5051062+fevrin@users.noreply.github.com
 #          subject: "Build #${{ github.run_number }} report"
 #          body: echo "${{ env.NOTIFICATION_CONTENT }}"
+        run: echo "${{ env.NOTIFICATION_CONTENT }}"
