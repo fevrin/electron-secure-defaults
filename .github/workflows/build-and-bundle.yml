@@ -3,7 +3,6 @@ name: build-and-bundle
 # Controls when the workflow will run
 on:
   pull_request:
-    paths:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -43,19 +42,23 @@ jobs:
         if: ${{ env.ACT }}
         run: find | wc -l
 
-      - name: Build the package
+      - name: Check for and report any outdated dependencies
+        run: npm audit fix --force
+
+      - name: Check for and report any vulnerabilities
+        # report any high and critical vulnerabilities
         uses: borales/actions-yarn@v4.2.0
         with:
-          cmd: build # will run `yarn build` script
+          cmd: electronegativity --severity high # will run `yarn electronegativity` script to return "high" or above severity vulnerabilities
 
       - name: Print file count
         if: ${{ env.ACT }}
         run: find | wc -l
 
-      - name: Bundle the package
-        uses: vimtor/action-zip@v1
+      - name: Build the package
+        uses: borales/actions-yarn@v4.2.0
         with:
-          files: ./
+          cmd: build # will run `yarn build` script
 
       - name: Print file count
         if: ${{ env.ACT }}
@@ -73,28 +76,62 @@ jobs:
         if: ${{ env.ACT }}
         run: find | wc -l
 
+      - name: List 'package' directory
+        if: ${{ env.ACT }}
+        run: ls -halF package
+
+      - name: Bundle the package
+        run: |
+          zip --junk-paths electron-secure-defaults-app.zip package/electron-secure-defaults*
+
+      - name: List 'electron-secure-defaults-app.zip' contents
+        if: ${{ env.ACT }}
+        run: unzip -l electron-secure-defaults-app.zip
+
+      - name: Print file count
+        if: ${{ env.ACT }}
+        run: find | wc -l
+
       - uses: actions/upload-artifact@v3
         if: ${{ !env.ACT }}
         with:
           name: electron-secure-defaults-artifact
-          path: ${{ github.workspace }}/result.zip
+          path: ${{ github.workspace }}/electron-secure-defaults-app.zip
+          if-no-files-found: error
 
       - name: Print file count
         if: ${{ env.ACT }}
         run: find | wc -l
 
-#      - name: Notify build results
-#        # include:
-#        # - a URL that points to the build
-#        # - the status of the build
-#        # - any other relevant information
+      # it seems to be unreasonably convoluted to retrieve the artifact URL, so I'll use a fake value:
+      # https://github.com/actions/upload-artifact/issues/50
+      # https://github.com/orgs/community/discussions/51403
+      - name: Generate build report
+        id: notification_content
+        run: |
+          NOTIFICATION_CONTENT=$(cat << EOF
 
-      - name: Check for and report any vulnerabilities
-        # report any high and critical vulnerabilities
-        uses: borales/actions-yarn@v4.2.0
-        with:
-          cmd: electronegativity --severity high # will run `yarn electronegativity` script to return "high" or above severity vulnerabilities
+            Here is a report on the status of "${{ github.workflow }}" build #${{ github.run_number }}:
+            * Job status: ${{ job.status }}
+            * Artifacts: ${{ github.server_url }}/${{ github.repository }}/suites/${{ github.suite_id }}/artifacts/${{ github.artifact_id }}
 
-      - name: Print file count
-        if: ${{ env.ACT }}
-        run: find | wc -l
+            You can find the full details here::
+            ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          EOF
+          )
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "NOTIFICATION_CONTENT<<$EOF" >> $GITHUB_ENV
+          echo "$NOTIFICATION_CONTENT" >> $GITHUB_ENV
+          echo "$EOF" >> $GITHUB_ENV
+
+      - name: Notify build report
+        # include:
+        # - a URL that points to the build
+        # - the status of the build
+        # - any other relevant information
+#        uses: actions/email@v2
+#        with:
+#          to: 5051062+fevrin@users.noreply.github.com
+#          subject: "Build #${{ github.run_number }} report"
+#          body: echo "${{ env.NOTIFICATION_CONTENT }}"
+        run: echo "${{ env.NOTIFICATION_CONTENT }}"
